@@ -1,4 +1,5 @@
 const express = require("express");
+const helmet = require("helmet");
 const multer = require("multer");
 const cors = require("cors");
 const fs = require("fs");
@@ -7,6 +8,27 @@ const path = require("path");
 const { rateLimit } = require("express-rate-limit");
 
 const app = express();
+
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
+
+app.use(helmet.contentSecurityPolicy({
+  useDefaults: false,
+  directives: {
+    "default-src": ["'self'"],
+    "script-src": ["'self'"],
+    "style-src": ["'self'", "'unsafe-inline'"],
+    "img-src": ["'self'", "data:", "blob:"],
+    "media-src": ["'self'", "blob:"],
+    "connect-src": ["'self'"],
+    "font-src": ["'self'"],
+    "object-src": ["'none'"],
+    "base-uri": ["'self'"],
+    "frame-ancestors": ["'self'"],
+    "form-action": ["'self'"]
+  },
+  reportOnly: true
+}));
+
 
 const registerLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -78,6 +100,10 @@ function requireAuth(req, res, next) {
 
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
+app.get("/app.js", (req, res) => {
+  res.type("application/javascript");
+  res.sendFile(path.join(__dirname, "app.js"));
+});
 app.use("/videos", express.static("videos"));
 app.use("/uploads/avatars", express.static(path.join(__dirname, "uploads/avatars")));
 app.get("/", (req, res) => {
@@ -483,15 +509,54 @@ app.delete("/api/account", accountDeleteLimiter, requireAuth, (req, res) => {
 });
 
 app.post("/api/avatar", requireAuth, (req, res) => {
-  avatarUpload.single("avatar")(req, res, err => {
+  avatarUpload.single("avatar")(req, res, async err => {
     if (err) return res.status(400).json({message:"عکس باید JPG، PNG یا WebP وي او تر ۵ MB کم وي"});
     if (!req.file) return res.status(400).json({message:"عکس انتخاب کړه"});
-    const users = readUsers();
-    const me = users.find(u => u.username === req.username);
-    if (!me) return res.status(404).json({message:"حساب ونه موندل شو"});
-    me.avatar = "/uploads/avatars/" + req.file.filename;
-    saveUsers(users);
-    res.json({message:"د پروفایل عکس بدل شو", avatar:me.avatar});
+
+    try {
+      const { fileTypeFromFile } = await import("file-type");
+      const detected = await fileTypeFromFile(req.file.path);
+      const allowed = ["image/jpeg", "image/png", "image/webp"];
+
+      if (!detected || !allowed.includes(detected.mime) ||
+          detected.mime !== req.file.mimetype) {
+        await fs.promises.unlink(req.file.path).catch(() => {});
+        return res.status(415).json({message:"د عکس اصلي بڼه ناسمه ده؛ JPG، PNG یا WebP وکاروه"});
+      }
+
+      const users = readUsers();
+      const me = users.find(u => u.username === req.username);
+
+      if (!me) {
+        await fs.promises.unlink(req.file.path).catch(() => {});
+        return res.status(404).json({message:"حساب ونه موندل شو"});
+      }
+
+      const oldAvatar = me.avatar;
+      const newAvatar = "/uploads/avatars/" + req.file.filename;
+      me.avatar = newAvatar;
+
+      try {
+        saveUsers(users);
+      } catch (error) {
+        await fs.promises.unlink(req.file.path).catch(() => {});
+        throw error;
+      }
+
+      if (typeof oldAvatar === "string" &&
+          oldAvatar.startsWith("/uploads/avatars/")) {
+        const oldName = path.basename(oldAvatar);
+        const oldPath = path.join(__dirname, "uploads", "avatars", oldName);
+        if (oldName && oldName !== path.basename(newAvatar)) {
+          await fs.promises.unlink(oldPath).catch(() => {});
+        }
+      }
+
+      return res.json({message:"د پروفایل عکس بدل شو", avatar:newAvatar});
+    } catch (error) {
+      console.error("Avatar upload error:", error.message);
+      return res.status(500).json({message:"د عکس په ثبتولو کې ستونزه رامنځته شوه"});
+    }
   });
 });
 
