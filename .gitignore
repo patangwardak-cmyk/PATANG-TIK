@@ -14,3 +14,8 @@ admin-logs.json
 *-backup*.js
 *-backup*.html
 check.js
+
+# Android build exclusions
+android-build/node_modules/
+android-build/android/app/build/
+android-build/android/app/src/main/AndroidManifest.before-permissions.xml

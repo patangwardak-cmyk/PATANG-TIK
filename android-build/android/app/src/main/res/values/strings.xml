@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PATANG TIK</string>
+    <string name="title_activity_main">PATANG TIK</string>
+    <string name="package_name">com.wardak.patangtik</string>
+    <string name="custom_url_scheme">com.wardak.patangtik</string>
+</resources>

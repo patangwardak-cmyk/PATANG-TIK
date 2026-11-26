@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ps" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PATANG TIK 🇦🇫</title>
+<style>
+*{box-sizing:border-box}
+:root{color-scheme:dark;--green:#20c56b;--surface:#17191d;--line:#292d33}
+body{margin:0;background:#08090b;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
+header{height:65px;padding:12px 17px;display:flex;justify-content:space-between;align-items:center;background:rgba(15,17,20,.96);border-bottom:1px solid var(--line);position:relative;z-index:5}
+.logo{font-size:22px;font-weight:800;letter-spacing:.4px}
+.flag{color:#e63946}
+main{height:calc(100dvh - 125px);display:flex;align-items:stretch;justify-content:center;background:#08090b;position:relative}
+.video{height:95%;width:94%;background:linear-gradient(160deg,#20242a,#08090b);border-radius:22px;display:flex;align-items:center;justify-content:center;text-align:center}
+.video h2{font-size:25px}
+.actions{display:none}
+button{background:none;color:white;border:0;font-size:22px;cursor:pointer;font-family:inherit}
+button:active{transform:scale(.94)}
+nav{height:60px;background:rgba(23,25,29,.98);display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);position:relative;z-index:5}
+nav button{font-size:14px;min-width:55px;padding:5px 8px;border-radius:13px;transition:background .2s}
+nav button:focus{background:#26352d;color:var(--green)}
+small{display:block;font-size:11px;margin-top:5px;color:#b8bdc5}
+#videoBox{height:100%;width:100%;overflow-y:auto;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;scroll-snap-type:y mandatory;} #videoBox>div{flex:0 0 100%;height:100%;min-height:100%;position:relative;scroll-snap-align:start;}#videoBox video{flex:0 0 100%;width:100%;height:100%;object-fit:cover;scroll-snap-align:start;background:#000;}
+/* iOS-style profile and comments */
+#commentsModal>div{
+ background:#191b20!important;
+ border:1px solid #30343b;
+ border-bottom:0;
+ border-radius:26px 26px 0 0!important;
+ padding:20px!important;
+ box-shadow:0 -12px 40px #0008;
+}
+#commentsModal input{
+ background:#292d33!important;
+ border:1px solid #3a4048!important;
+ border-radius:16px!important;
+ outline:none;
+}
+#commentsModal button{
+ border-radius:12px;
+}
+#authBox>div{
+ background:#191b20!important;
+ border:1px solid #30343b!important;
+ border-radius:25px!important;
+ box-shadow:0 15px 45px #0009;
+}
+#authBox input{
+ background:#292d33!important;
+ border:1px solid #3a4048!important;
+ border-radius:13px!important;
+ color:white;
+ outline:none;
+}
+#authBox input:focus,#commentsModal input:focus{
+ border-color:var(--green)!important;
+}
+#profileInfo{
+ background:#22262c!important;
+ border:1px solid #343a43;
+ border-radius:18px!important;
+}
+#profileInfo button{
+ border-radius:13px!important;
+ margin-top:8px;
+}
+#myVideos video{
+ border-radius:15px;
+}
+
+/* Profile video gallery */
+#myVideos .my-video-grid{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:12px;
+}
+#myVideos .my-video-card{
+ min-width:0;
+ overflow:hidden;
+ background:#191d23;
+ border:1px solid #303741;
+ border-radius:15px;
+ padding:7px;
+}
+#myVideos .my-video-card video{
+ display:block;
+ width:100%;
+ aspect-ratio:3/4;
+ object-fit:cover;
+ background:#08090b;
+ border-radius:10px;
+}
+#myVideos .my-video-title{
+ font-size:13px;
+ font-weight:bold;
+ margin-top:8px;
+ color:#20c56b;
+}
+#myVideos .my-video-caption{
+ font-size:12px;
+ color:#c5cad2;
+ margin-top:5px;
+ overflow-wrap:anywhere;
+}
+
+
+/* PATANG TIK - Premium mobile feed */
+html,body{width:100%;height:100%;min-height:100%;overscroll-behavior:none}
+body{background:#050607}
+header{
+ height:58px;
+ padding:8px 15px;
+ background:rgba(8,10,13,.96);
+ border-bottom:1px solid rgba(255,255,255,.07);
+ backdrop-filter:blur(18px);
+}
+.logo{font-size:21px;letter-spacing:.5px}
+main{
+ height:calc(100dvh - 118px - env(safe-area-inset-bottom));
+ min-height:0;
+ background:#000;
+}
+#videoBox{
+ width:100%;
+ height:100%;
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ scroll-snap-type:y mandatory;
+ scrollbar-width:none;
+}
+#videoBox::-webkit-scrollbar{display:none}
+#videoBox>div{
+ width:100%;
+ height:100%;
+ min-height:100%;
+ flex:0 0 100%;
+ scroll-snap-align:start;
+ scroll-snap-stop:always;
+ overflow:hidden;
+ background:#000;
+}
+#videoBox video{
+ display:block;
+ width:100%;
+ height:100%;
+ object-fit:contain;
+ background:#000;
+ border-radius:0;
+}
+nav{
+ min-height:60px;
+ height:calc(60px + env(safe-area-inset-bottom));
+ padding:5px 4px env(safe-area-inset-bottom);
+ background:rgba(13,15,19,.98);
+ border-top:1px solid rgba(255,255,255,.08);
+ backdrop-filter:blur(18px);
+}
+nav button{
+ flex:1;
+ min-width:0;
+ font-size:17px;
+ color:#e9edf2;
+ transition:color .2s,transform .2s;
+}
+nav button small{font-size:10px;color:#aeb5c0}
+nav button:focus{background:transparent;color:#20c56b}
+button{touch-action:manipulation}
+button:active{transform:scale(.91)}
+@media(min-width:700px){
+ main{max-width:480px;margin:0 auto}
+ header,nav{padding-left:max(15px,calc((100vw - 480px)/2));padding-right:max(15px,calc((100vw - 480px)/2))}
+}
+
+
+
+/* Floating video action rail */
+.feed-action{
+ position:absolute;
+ right:12px;
+ z-index:3;
+ width:52px;
+ min-height:52px;
+ padding:7px 3px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:3px;
+ color:#fff;
+ font-size:25px;
+ line-height:1.1;
+ background:rgba(15,17,21,.48);
+ border:1px solid rgba(255,255,255,.17);
+ border-radius:18px;
+ backdrop-filter:blur(12px);
+ -webkit-backdrop-filter:blur(12px);
+ text-shadow:0 1px 5px #000;
+ box-shadow:0 5px 18px rgba(0,0,0,.2);
+}
+.feed-action small{
+ display:block;
+ margin:0;
+ color:#fff;
+ font-size:10px;
+ font-weight:600;
+ text-shadow:0 1px 4px #000;
+}
+.feed-action:active{transform:scale(.9)}
+.feed-action.like-action{bottom:92px}
+.feed-action.comment-action{bottom:158px}
+.feed-action.share-action{bottom:224px}
+.feed-action.report-action{bottom:290px}
+.feed-action[data-liked="yes"]{color:#ff4d73}
+.feed-caption{
+ position:absolute;
+ z-index:2;
+ bottom:15px;
+ left:12px;
+ right:76px;
+ padding:34px 10px 10px;
+ text-align:left;
+ color:#fff;
+ pointer-events:none;
+ background:linear-gradient(transparent,rgba(0,0,0,.62));
+ border-radius:0 0 12px 12px;
+ text-shadow:0 2px 5px #000;
+}
+.feed-caption p{margin:6px 0;font-size:13px;line-height:1.5}
+.feed-caption small{color:#eee;font-size:11px}
+
+
+/* Smooth premium feed interactions */
+#videoBox{
+ scroll-behavior:smooth;
+ -webkit-overflow-scrolling:touch;
+}
+#videoBox>div{
+ transition:opacity .25s ease;
+}
+.feed-action{
+ transition:transform .18s ease,background .2s ease;
+}
+.feed-action:active{
+ transform:scale(.88);
+}
+.feed-action[data-liked="yes"]{
+ animation:patangHeart .35s ease;
+}
+@keyframes patangHeart{
+ 0%{transform:scale(1)}
+ 35%{transform:scale(1.3)}
+ 65%{transform:scale(.9)}
+ 100%{transform:scale(1)}
+}
+nav button{
+ transition:transform .18s ease,color .2s ease,background .2s ease;
+}
+@media(prefers-reduced-motion:reduce){
+ #videoBox, #videoBox>div, .feed-action, nav button{
+  scroll-behavior:auto;
+  animation:none!important;
+  transition:none!important;
+ }
+}
+
+
+
+.like-count-pop{
+ display:inline-block;
+ animation:patangCountPop .35s ease;
+}
+@keyframes patangCountPop{
+ 0%{transform:scale(1)}
+ 45%{transform:scale(1.45)}
+ 100%{transform:scale(1)}
+}
+
+/* Premium iOS-style comments sheet */
+.comments-overlay{
+ position:fixed;
+ inset:0;
+ z-index:100;
+ display:flex;
+ align-items:flex-end;
+ justify-content:center;
+ background:rgba(0,0,0,.68);
+ backdrop-filter:blur(5px);
+ -webkit-backdrop-filter:blur(5px);
+ animation:commentsFadeIn .22s ease;
+}
+.comments-sheet{
+ background:linear-gradient(180deg,#292929,#171717);
+ width:100%;
+ max-width:500px;
+ height:min(72vh,680px);
+ padding:12px 16px calc(16px + env(safe-area-inset-bottom));
+ border:1px solid #ffffff18;
+ border-bottom:0;
+ border-radius:26px 26px 0 0;
+ display:flex;
+ flex-direction:column;
+ box-shadow:0 -12px 45px #0008;
+ animation:commentsSlideUp .32s cubic-bezier(.2,.8,.2,1);
+}
+.comments-handle{
+ width:42px;
+ height:5px;
+ border-radius:9px;
+ background:#888;
+ opacity:.75;
+ margin:0 auto 15px;
+ flex-shrink:0;
+}
+.comments-sheet #commentsList{
+ overscroll-behavior:contain;
+ scrollbar-width:thin;
+}
+.comments-sheet #newComment{
+ outline:none;
+ border:1px solid #ffffff20!important;
+}
+.comments-sheet #newComment:focus{
+ border-color:#20c56b!important;
+}
+@keyframes commentsFadeIn{
+ from{opacity:0}
+ to{opacity:1}
+}
+@keyframes commentsSlideUp{
+ from{transform:translateY(35px);opacity:.7}
+ to{transform:translateY(0);opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+ .comments-overlay,.comments-sheet{animation:none}
+}
+
+/* Premium PATANG TIK profile design */
+#profileInfo{
+ background:linear-gradient(160deg,#202b27,#17191b 65%)!important;
+ border:1px solid #20c56b44;
+ border-radius:24px!important;
+ padding:22px 16px!important;
+ margin-top:14px!important;
+ box-shadow:0 12px 35px #0006;
+ text-align:center;
+}
+#profileInfo>h3{
+ color:#20c56b;
+ font-size:23px;
+ margin:4px 0 18px;
+ letter-spacing:.3px;
+}
+#profileAvatar{
+ width:118px!important;
+ height:118px!important;
+ border:4px solid #20c56b!important;
+ padding:3px;
+ box-shadow:0 0 0 5px #20c56b22,0 8px 25px #0008;
+ margin:10px auto 16px!important;
+}
+#profileName{
+ color:#fff;
+ font-size:18px;
+ font-weight:700;
+ margin:12px 0 18px;
+ overflow-wrap:anywhere;
+}
+#profileInfo>button:not(#adminPanelButton){
+ min-height:46px;
+ border-radius:14px!important;
+ margin-top:10px;
+ font-weight:600;
+ border:1px solid #ffffff18;
+ box-shadow:0 4px 12px #0003;
+ transition:transform .18s ease,filter .18s ease;
+}
+#profileInfo>button:active{
+ transform:scale(.97);
+ filter:brightness(1.15);
+}
+#adminPanelButton{
+ border-radius:14px!important;
+ min-height:46px;
+}
+#adminPanel,#myVideos,#followRequestsBox,#usersBox{
+ text-align:right;
+ border-radius:14px;
+}
+
+#searchModal{
+ position:fixed;inset:0;z-index:150;background:#08090bed;
+ backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ display:none;justify-content:center;align-items:flex-start;padding:16px;
+}
+.search-sheet{
+ width:100%;max-width:520px;height:88vh;margin-top:3vh;
+ background:linear-gradient(160deg,#202a27,#151719);
+ border:1px solid #20c56b44;border-radius:24px;
+ display:flex;flex-direction:column;overflow:hidden;
+ box-shadow:0 15px 50px #0009;
+}
+.search-heading{display:flex;justify-content:space-between;align-items:center;padding:17px;border-bottom:1px solid #ffffff18}
+.search-field{margin:14px;padding:14px;border-radius:15px;background:#303438;color:white;border:1px solid #ffffff20;font-size:16px;outline:none}
+.search-field:focus{border-color:#20c56b}
+#searchResults{flex:1;overflow-y:auto;padding:0 14px 20px;text-align:right}
+.search-section-title{color:#20c56b;margin:16px 0 8px}
+.search-result{width:100%;display:block;text-align:right;background:#292f30;color:white;padding:13px;margin:7px 0;border-radius:13px;border:1px solid #ffffff12}
+.search-result:active{background:#35443c}
+
+</style>
+</head>
+<body>
+<header>
+<div id="videoCount" style="color:#20c56b;font-size:13px">ویډیوګانې: ۰</div>
+<div class="logo">PATANG <span class="flag">TIK 🌍</span></div>
+<select id="languageSelect" onchange="setLanguage(this.value)" aria-label="Language" style="background:#252a30;color:white;border:1px solid #20c56b66;border-radius:10px;padding:6px;max-width:105px;font-size:12px"><option value="ps">پښتو</option><option value="fa">دری</option><option value="en">English</option></select>
+<button onclick="openSearch()">🔍</button>
+</header>
+<main>
+<div class="video" id="videoBox"><div><h2>🇦🇫 PATANG TIK</h2><p>ویډیوګانې بار کېږي...</p></div></div>
+<div class="actions">
+<button onclick="like()">❤️<small id="likes">0</small></button>
+<button onclick="alert('تبصرې')">💬<small>تبصرې</small></button>
+<button onclick="alert('شریکول')">↗️<small>شریکول</small></button>
+</div>
+</main>
+<input type="file" id="videoFile" accept="video/*" style="display:none" onchange="uploadVideo(this)">
+<nav>
+<button onclick="goHome()">🏠<small id="navHome">کور</small></button>
+<button onclick="openSearch()">🔎<small id="navSearch">لټون</small></button>
+<button onclick="openPublish()">➕<small id="navPublish">خپرول</small></button>
+<button onclick="openMessages()">💬<small id="navMessages">پیغامونه</small><span id="messageCount" style="display:inline-block;min-width:16px;margin-right:3px;padding:1px 5px;border-radius:20px;background:#e63946;color:white;font-size:10px;font-weight:bold"></span></button>
+<button onclick="openNotifications()">🔔<small id="navNotifications">خبرتیاوې</small><span id="notificationCount"></span></button>
+<button onclick="openAuth()">👤<small id="navProfile">پروفایل</small></button>
+</nav>
+
+
+<div id="cameraModal" style="display:none;position:fixed;inset:0;z-index:220;background:#050607;flex-direction:column;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom)">
+ <div style="height:58px;display:flex;align-items:center;justify-content:space-between">
+  <button onclick="closeCamera()">✕</button>
+  <b style="color:#20c56b;font-size:18px">PATANG CAMERA</b>
+  <span id="cameraStatus" style="font-size:12px;color:#b8bdc5">چمتو</span>
+ </div>
+ <div style="position:relative;flex:1;min-height:0;background:#000;border-radius:25px;overflow:hidden;border:1px solid #ffffff20">
+  <video id="cameraPreview" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover"></video>
+  <div id="cameraPlaceholder" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#b8bdc5;padding:25px">د کامرې د پیل لپاره د کامرې تڼۍ کېکاږه</div>
+  <div id="cameraTimer" style="position:absolute;top:15px;left:15px;background:#0009;padding:7px 13px;border-radius:20px;display:none">● 00:00</div>
+ </div>
+ <div style="padding:16px 2px 12px;display:flex;justify-content:center;align-items:center;gap:12px">
+  <button id="cameraStartButton" onclick="startCamera()" data-i18n="cameraStart" style="background:#20c56b;color:#07110b;border-radius:18px;padding:13px 22px;font-size:16px;font-weight:700">📷 پیل کامره</button>
+  <button id="cameraSwitchButton" onclick="switchCamera()" data-i18n="cameraSwitch" style="background:#252a30;border-radius:16px;padding:13px 16px">🔄 کامره اړول</button>
+  <select id="cameraQuality" aria-label="د ویډیو کیفیت" style="background:#252a30;color:white;border:1px solid #ffffff22;border-radius:14px;padding:12px;font-size:14px">
+   <option value="720">720p</option>
+   <option value="1080">1080p</option>
+  </select>
+ </div>
+ <div style="display:flex;justify-content:center;padding:4px 0 12px">
+  <button type="button" onclick="document.getElementById('videoFile').click()" style="background:#252a30;color:white;border:1px solid #20c56b;border-radius:16px;padding:12px 24px;font-size:15px">🖼️ له ګالرۍ ویډیو انتخاب</button>
+ </div>
+ <div style="display:flex;justify-content:center;gap:14px;padding-bottom:14px">
+  <button id="cameraRecordButton" onclick="toggleRecording()" disabled style="background:#e63946;border-radius:50px;width:72px;height:58px;font-size:24px;opacity:.45">●</button>
+  <button id="cameraCloseButton" onclick="closeCamera()" data-i18n="cameraClose" style="background:#252a30;border-radius:16px;padding:12px 22px;font-size:15px">بندول</button>
+ </div>
+ <div id="uploadProgressBox" style="display:none;padding:10px 4px">
+  <div style="display:flex;justify-content:space-between;color:white;font-size:13px;margin-bottom:7px">
+   <span id="uploadProgressText">ویډیو پورته کېږي...</span>
+   <b id="uploadProgressPercent">0%</b>
+  </div>
+  <div style="height:9px;background:#30343b;border-radius:20px;overflow:hidden">
+   <div id="uploadProgressBar" style="height:100%;width:0%;background:#20c56b;border-radius:20px;transition:width .15s"></div>
+  </div>
+ </div>
+ <p style="text-align:center;color:#9299a3;font-size:11px;margin:0 0 8px">کیفیت د موبایل او براوزر له ملاتړ سره تړلې ده</p>
+</div>
+
+<div id="commentsModal" class="comments-overlay" style="display:none">
+ <div class="comments-sheet">
+  <div class="comments-handle"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444;padding-bottom:12px">
+   <b data-i18n="commentsTitle">💬 تبصرې</b>
+   <button onclick="closeComments()">✖</button>
+  </div>
+  <div id="commentsList" style="flex:1;overflow-y:auto;padding:12px 0"></div>
+  <div style="display:flex;gap:8px;border-top:1px solid #444;padding-top:12px">
+   <input id="newComment" data-i18n-placeholder="commentPlaceholder" placeholder="خپل نظر ولیکئ..." style="flex:1;min-width:0;padding:12px;background:#333;color:white;border:0;border-radius:20px">
+   <button onclick="sendComment()" data-i18n="send" style="background:#168b45;padding:8px 16px;border-radius:20px">لېږل</button>
+  </div>
+ </div>
+</div>
+
+<div id="authBox" style="display:none;position:fixed;inset:0;background:#000e;z-index:99;align-items:center;justify-content:center;padding:20px">
+ <div style="background:#202020;padding:22px;border-radius:15px;width:100%;max-width:350px;text-align:center;border:1px solid #168b45;max-height:90vh;overflow-y:auto">
+  <h2 style="color:#20c56b">🇦🇫 PATANG TIK</h2>
+  <h3 data-i18n="authTitle">حساب جوړول او ننوتل</h3>
+  <input id="authName" data-i18n-placeholder="usernamePlaceholder" placeholder="د کارونکي نوم" style="width:100%;padding:13px;margin:8px 0;background:#333;color:white;border:1px solid #555;border-radius:8px">
+  <input id="authPass" type="password" data-i18n-placeholder="passwordPlaceholder" placeholder="پاسورډ (لږ تر لږه ۸ توري)" style="width:100%;padding:13px;margin:8px 0;background:#333;color:white;border:1px solid #555;border-radius:8px">
+  <button onclick="registerUser()" data-i18n="register" style="background:#168b45;padding:10px;border-radius:8px;width:100%;margin-top:10px">حساب جوړول</button>
+  <button onclick="loginUser()" data-i18n="login" style="background:#333;padding:10px;border-radius:8px;width:100%;margin-top:8px">ننوتل</button>
+  <p id="authStatus" style="color:#20c56b;font-size:14px"></p>
+  <div id="profileInfo" style="display:none;background:#292929;padding:12px;border-radius:10px;margin-top:10px">
+   <h3 data-i18n="myProfile">👤 زما پروفایل</h3>
+   <img id="profileAvatar" src="" alt="پروفایل عکس" style="width:110px;height:110px;border-radius:50%;object-fit:cover;background:#333;border:3px solid #168b45;display:block;margin:10px auto">
+   <input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadAvatar(this)">
+   <button onclick="document.getElementById('avatarFile').click()" style="background:#1769aa;padding:9px;border-radius:8px;width:100%;margin-bottom:10px">📷 د پروفایل عکس بدلول</button>
+   <p id="profileName"></p>
+   <button id="adminPanelButton" onclick="loadAdminPanel()" style="display:none;background:#b8860b;padding:11px;border-radius:9px;width:100%;margin:10px 0">🛡️ د اډمین پینل</button>
+   <div id="adminPanel" style="display:none;margin-top:12px;text-align:right"></div>
+   <button onclick="loadMyVideos()" data-i18n="myVideos" style="background:#168b45;padding:10px;border-radius:8px;width:100%">زما ویډیوګانې 🎬</button>
+   <div id="myVideos" style="margin-top:12px;text-align:right"></div>
+   <button onclick="loadUsers()" data-i18n="otherUsers" style="background:#1769aa;padding:10px;border-radius:8px;width:100%;margin-top:10px">نور کارنان 👥</button>
+   <button onclick="loadFollowRequests()" style="background:#8b5cf6;padding:10px;border-radius:8px;width:100%;margin-top:10px">🔔 د فالو غوښتنې <span id="followRequestCount">0</span></button>
+   <div id="followRequestsBox" style="margin-top:12px;text-align:right"></div>
+   <div id="usersBox" style="margin-top:12px;text-align:right"></div>
+   <button onclick="document.getElementById('deleteAccountBox').style.display='block'" style="background:#8b2525;padding:10px;border-radius:8px;width:100%;margin-top:12px">🗑️ خپل حساب حذف کړه</button>
+   <div id="deleteAccountBox" style="display:none;background:#3a2020;padding:12px;border-radius:8px;margin-top:10px">
+    <p style="color:#ffbaba">د حساب د حذف لپاره خپل پاسورډ ولیکه. ویډیوګانې او راپورونه به پاتې وي.</p>
+    <input id="deleteAccountPassword" type="password" autocomplete="current-password" placeholder="خپل پاسورډ ولیکه" style="width:100%;padding:10px;margin:8px 0;border-radius:6px">
+    <button onclick="deleteMyAccount()" style="background:#b52b2b;padding:10px;border-radius:8px;width:100%">حساب په دایمي ډول حذف کړه</button>
+    <button onclick="document.getElementById('deleteAccountPassword').value='';document.getElementById('deleteAccountBox').style.display='none'" style="background:#555;padding:9px;border-radius:8px;width:100%;margin-top:7px">لغوه کول</button>
+   </div>
+   <button onclick="logoutUser()" data-i18n="logout" style="background:#b52b2b;padding:10px;border-radius:8px;width:100%">وتل</button>
+  </div>
+  <button onclick="closeAuth()" data-i18n="close" style="font-size:15px">بندول ✖</button>
+ </div>
+</div>
+
+
+
+<div id="userProfileModal" style="display:none;position:fixed;inset:0;z-index:170;background:#08090bf2;overflow-y:auto;padding:18px">
+ <div style="max-width:520px;margin:20px auto;background:#202a27;border:1px solid #20c56b55;border-radius:22px;padding:18px;text-align:center">
+  <button onclick="closeUserProfile()" style="float:left;background:#333;padding:9px 14px;border-radius:10px">✖ بندول</button>
+  <div id="userProfileContent" style="clear:both;padding-top:20px">پروفایل لوډ کېږي...</div>
+ </div>
+</div>
+
+<div id="searchModal">
+ <div class="search-sheet">
+  <div class="search-heading">
+   <b data-i18n="searchTitle">🔎 لټون – PATANG TIK</b>
+   <button onclick="closeSearch()">✖</button>
+  </div>
+  <input id="patangSearchInput" class="search-field" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="د ویډیو یا کارونکي نوم ولیکئ..." oninput="runPatangSearch()">
+  <div id="searchResults">
+   <p data-i18n="searchPrompt">د لټون لپاره نوم ولیکئ...</p>
+  </div>
+ </div>
+</div>
+
+<div id="notificationsModal" style="display:none;position:fixed;inset:0;background:#000d;z-index:120;align-items:center;justify-content:center;padding:12px">
+ <div style="width:100%;max-width:500px;height:85vh;background:#191b20;border:1px solid #30343b;border-radius:24px;display:flex;flex-direction:column;overflow:hidden">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #30343b">
+   <b data-i18n="notificationsTitle">🔔 خبرتیاوې</b>
+   <button onclick="closeNotifications()">✖</button>
+  </div>
+  <div id="notificationsList" style="flex:1;overflow-y:auto;padding:12px;text-align:right">
+   <p data-i18n="notificationsLoading">خبرتیاوې...</p>
+  </div>
+ </div>
+</div>
+
+<div id="messagesModal" style="display:none;position:fixed;inset:0;background:#000d;z-index:110;align-items:center;justify-content:center;padding:12px">
+ <div style="width:100%;max-width:500px;height:90vh;background:#191b20;border:1px solid #30343b;border-radius:24px;display:flex;flex-direction:column;overflow:hidden">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #30343b">
+   <b data-i18n="messagesTitle">💬 شخصي پیغامونه</b>
+   <button onclick="closeMessages()">✖</button>
+  </div>
+  <div id="messageUsers" style="padding:10px;overflow-y:auto;max-height:32%;border-bottom:1px solid #30343b">
+   <p data-i18n="usersLoading">کارنان...</p>
+  </div>
+  <div id="chatTitle" data-i18n="chooseUser" style="padding:10px;color:#20c56b">د خبرو لپاره یو کارن وټاکئ</div>
+  <div id="chatMessages" style="flex:1;overflow-y:auto;padding:12px"></div>
+  <div style="display:flex;gap:8px;padding:12px;border-top:1px solid #30343b">
+   <input id="privateMessageInput" data-i18n-placeholder="privateMessagePlaceholder" placeholder="خپل پیغام ولیکئ..." style="flex:1;min-width:0;padding:12px;background:#292d33;color:white;border:1px solid #3a4048;border-radius:15px">
+   <button onclick="sendPrivateMessage()" data-i18n="send" style="background:#168b45;padding:8px 14px;border-radius:12px">لېږل</button>
+  </div>
+ </div>
+</div>
+
+<script src="/app.js" defer></script>
+</body>
+</html>
