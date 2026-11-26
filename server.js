@@ -66,7 +66,7 @@ const accountDeleteLimiter = rateLimit({
   }
 });
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const SESSION_TTL = 24 * 60 * 60 * 1000;
 const sessions = new Map();
 
