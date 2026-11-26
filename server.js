@@ -66,6 +66,14 @@ const accountDeleteLimiter = rateLimit({
   }
 });
 
+const DATA_DIR = path.resolve(process.env.DATA_DIR || __dirname);
+const VIDEO_DIR = path.resolve(process.env.VIDEO_DIR || path.join(DATA_DIR, "videos"));
+const AVATAR_DIR = path.resolve(process.env.AVATAR_DIR || path.join(DATA_DIR, "uploads", "avatars"));
+
+for (const dir of [DATA_DIR, VIDEO_DIR, AVATAR_DIR]) {
+  fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+}
+
 const PORT = Number(process.env.PORT) || 3000;
 const SESSION_TTL = 24 * 60 * 60 * 1000;
 const sessions = new Map();
@@ -104,14 +112,14 @@ app.get("/app.js", (req, res) => {
   res.type("application/javascript");
   res.sendFile(path.join(__dirname, "app.js"));
 });
-app.use("/videos", express.static("videos"));
-app.use("/uploads/avatars", express.static(path.join(__dirname, "uploads/avatars")));
+app.use("/videos", express.static(VIDEO_DIR));
+app.use("/uploads/avatars", express.static(AVATAR_DIR));
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
 function readAdminLogs() {
-  const file = path.join(__dirname, "admin-logs.json");
+  const file = path.join(DATA_DIR, "admin-logs.json");
   if (!fs.existsSync(file)) fs.writeFileSync(file, "[]");
   return JSON.parse(fs.readFileSync(file, "utf8") || "[]");
 }
@@ -129,7 +137,7 @@ function saveAdminLog(admin, action, target) {
 }
 
 function saveAdminLogs(logs) {
-  const file = path.join(__dirname, "admin-logs.json");
+  const file = path.join(DATA_DIR, "admin-logs.json");
   const tempFile = file + ".tmp";
   try {
     fs.writeFileSync(tempFile, JSON.stringify(logs, null, 2), { mode: 0o600 });
@@ -143,7 +151,7 @@ function saveAdminLogs(logs) {
 }
 
 function readNotifications() {
-  const file = path.join(__dirname, "notifications.json");
+  const file = path.join(DATA_DIR, "notifications.json");
   if (!fs.existsSync(file)) fs.writeFileSync(file, "[]");
   return JSON.parse(fs.readFileSync(file, "utf8") || "[]");
 }
@@ -162,15 +170,15 @@ function writeJsonAtomically(file, data) {
 }
 
 function saveNotifications(items) {
-  writeJsonAtomically(path.join(__dirname, "notifications.json"), items);
+  writeJsonAtomically(path.join(DATA_DIR, "notifications.json"), items);
 }
 
 function readVideos() {
-  return JSON.parse(fs.readFileSync("videos.json", "utf8") || "[]");
+  return JSON.parse(fs.readFileSync(path.join(DATA_DIR, "videos.json"), "utf8") || "[]");
 }
 
 function saveVideos(videos) {
-  writeJsonAtomically(path.join(__dirname, "videos.json"), videos);
+  writeJsonAtomically(path.join(DATA_DIR, "videos.json"), videos);
 }
 
 function cleanDeletedUserFromVideos(videos, username) {
@@ -214,7 +222,7 @@ function cleanDeletedUserFromVideos(videos, username) {
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, "videos")),
+  destination: (req, file, cb) => cb(null, VIDEO_DIR),
   filename: (req, file, cb) => cb(null, crypto.randomUUID() + ".upload")
 });
 
@@ -227,7 +235,7 @@ const upload = multer({
 });
 
 const avatarStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, "uploads/avatars")),
+  destination: (req, file, cb) => cb(null, AVATAR_DIR),
   filename: (req, file, cb) => {
     const ext = { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp" }[file.mimetype];
     cb(null, crypto.randomBytes(16).toString("hex") + ext);
@@ -265,7 +273,7 @@ app.post("/upload", requireAuth, upload.single("video"), async (req, res) => {
     }
 
     const filename = crypto.randomUUID() + ext;
-    finalPath = path.join(__dirname, "videos", filename);
+    finalPath = path.join(VIDEO_DIR, filename);
     await fs.promises.rename(req.file.path, finalPath);
 
     const videos = readVideos();
@@ -295,22 +303,22 @@ app.post("/upload", requireAuth, upload.single("video"), async (req, res) => {
 
 
 function readUsers() {
-  return JSON.parse(fs.readFileSync("users.json", "utf8") || "[]");
+  return JSON.parse(fs.readFileSync(path.join(DATA_DIR, "users.json"), "utf8") || "[]");
 }
 
 
 function readMessages() {
-  const file = path.join(__dirname, "messages.json");
+  const file = path.join(DATA_DIR, "messages.json");
   if (!fs.existsSync(file)) fs.writeFileSync(file, "[]");
   return JSON.parse(fs.readFileSync(file, "utf8") || "[]");
 }
 
 function saveMessages(messages) {
-  writeJsonAtomically(path.join(__dirname, "messages.json"), messages);
+  writeJsonAtomically(path.join(DATA_DIR, "messages.json"), messages);
 }
 
 function saveUsers(users) {
-  writeJsonAtomically(path.join(__dirname, "users.json"), users);
+  writeJsonAtomically(path.join(DATA_DIR, "users.json"), users);
 }
 
 function hashPassword(password, salt) {
@@ -489,7 +497,7 @@ app.delete("/api/account", accountDeleteLimiter, requireAuth, (req, res) => {
   if (typeof account.avatar === "string" &&
       account.avatar.startsWith("/uploads/avatars/")) {
     const avatarName = path.basename(account.avatar);
-    const avatarPath = path.join(__dirname, "uploads", "avatars", avatarName);
+    const avatarPath = path.join(AVATAR_DIR, avatarName);
     try {
       if (fs.existsSync(avatarPath)) fs.unlinkSync(avatarPath);
     } catch (error) {
@@ -546,7 +554,7 @@ app.post("/api/avatar", requireAuth, (req, res) => {
       if (typeof oldAvatar === "string" &&
           oldAvatar.startsWith("/uploads/avatars/")) {
         const oldName = path.basename(oldAvatar);
-        const oldPath = path.join(__dirname, "uploads", "avatars", oldName);
+        const oldPath = path.join(AVATAR_DIR, oldName);
         if (oldName && oldName !== path.basename(newAvatar)) {
           await fs.promises.unlink(oldPath).catch(() => {});
         }
@@ -1026,7 +1034,7 @@ app.delete("/api/videos/:name", requireAuth, (req, res) => {
     return res.status(400).json({ message: "د ویډیو نوم ناسم دی" });
   }
 
-  const videoPath = path.join(__dirname, "videos", safeName);
+  const videoPath = path.join(VIDEO_DIR, safeName);
 
   try {
     if (fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
@@ -1050,13 +1058,13 @@ function requireAdmin(req, res, next) {
 
 
 function readReports() {
-  const file = path.join(__dirname, "reports.json");
+  const file = path.join(DATA_DIR, "reports.json");
   if (!fs.existsSync(file)) fs.writeFileSync(file, "[]");
   return JSON.parse(fs.readFileSync(file, "utf8") || "[]");
 }
 
 function saveReports(reports) {
-  fs.writeFileSync(path.join(__dirname, "reports.json"), JSON.stringify(reports, null, 2));
+  writeJsonAtomically(path.join(DATA_DIR, "reports.json"), reports);
 }
 
 app.post("/api/reports", requireAuth, (req, res) => {

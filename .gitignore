@@ -19,3 +19,8 @@ check.js
 android-build/node_modules/
 android-build/android/app/build/
 android-build/android/app/src/main/AndroidManifest.before-permissions.xml
+
+# Environment secrets
+.env
+.env.*
+!.env.example

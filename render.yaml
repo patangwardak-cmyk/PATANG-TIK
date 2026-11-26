@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: patang-tik
+    runtime: node
+    plan: starter
+    buildCommand: npm ci
+    startCommand: npm start
+    disk:
+      name: patang-tik-data
+      mountPath: /data
+      sizeGB: 10
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /data
+      - key: VIDEO_DIR
+        value: /data/videos
+      - key: AVATAR_DIR
+        value: /data/uploads/avatars
